@@ -1,13 +1,11 @@
 import { useState, useEffect, useCallback, useMemo, useRef } from 'react'
-import { Link } from 'react-router-dom'
 import { useAuth } from '../context/AuthContext'
 import { API_BASE_URL } from '../config/api'
-import { 
-  createChart, 
-  type IChartApi, 
-  ColorType, 
-  AreaSeries, // Changed to AreaSeries for glow effect
-  HistogramSeries 
+import {
+  createChart,
+  ColorType,
+  AreaSeries,
+  HistogramSeries
 } from 'lightweight-charts'
 import card1 from '../images/card1.png'
 import card2 from '../images/card2.png'
