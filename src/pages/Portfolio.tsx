@@ -161,6 +161,7 @@ const Portfolio = () => {
   useEffect(() => {
   if (!chartContainerRef.current || historicalChartData.length === 0) return
 
+  const isMobile = window.innerWidth < 640
   const chart = createChart(chartContainerRef.current, {
     layout: {
       background: { type: ColorType.Solid, color: 'transparent' },
@@ -172,7 +173,7 @@ const Portfolio = () => {
       horzLines: { color: 'rgba(255,255,255,0.03)', style: 1 }
     },
     width: chartContainerRef.current.clientWidth,
-    height: 350,
+    height: isMobile ? 250 : 350,
     timeScale: {
       borderColor: 'transparent',
       barSpacing: 20,
@@ -188,8 +189,8 @@ const Portfolio = () => {
       vertLine: { color: 'rgba(34, 197, 94, 0.3)', width: 1, style: 2, labelBackgroundColor: '#22c55e' },
       horzLine: { color: 'rgba(34, 197, 94, 0.3)', width: 1, style: 2, labelBackgroundColor: '#22c55e' },
     },
-    handleScroll: { mouseWheel: false, pressedMouseMove: false },
-    handleScale: { mouseWheel: false, pinch: false },
+    handleScroll: { mouseWheel: true, pressedMouseMove: true },
+    handleScale: { mouseWheel: true, pinch: true },
   })
 
   // 1. ADD THE BAR CHART (HISTOGRAM) FIRST - This puts it in the background
@@ -226,7 +227,11 @@ const Portfolio = () => {
 
   const handleResize = () => {
     if (chartContainerRef.current) {
-      chart.applyOptions({ width: chartContainerRef.current.clientWidth })
+      const newIsMobile = window.innerWidth < 640
+      chart.applyOptions({
+        width: chartContainerRef.current.clientWidth,
+        height: newIsMobile ? 250 : 350
+      })
     }
   }
 
@@ -240,84 +245,84 @@ const Portfolio = () => {
   if (loading) return <div className="bg-black min-h-screen flex items-center justify-center text-white">Loading...</div>
 
   return (
-    <section className="px-6 py-12 bg-black min-h-screen text-white">
+    <section className="px-4 sm:px-6 py-6 sm:py-12 bg-black min-h-screen text-white">
       <div className="max-w-6xl mx-auto">
-        <div className="flex justify-between items-center mb-10">
-          <h1 className="text-3xl font-bold tracking-tight">Portfolio</h1>
-          <button onClick={() => setShowDepositModal(true)} className="px-6 py-3 bg-green-500 text-black font-bold rounded-2xl hover:bg-green-400 transition-all active:scale-95">
+        <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 mb-6 sm:mb-10">
+          <h1 className="text-2xl sm:text-3xl font-bold tracking-tight">Portfolio</h1>
+          <button onClick={() => setShowDepositModal(true)} className="px-4 sm:px-6 py-2.5 sm:py-3 bg-green-500 text-black font-bold rounded-xl sm:rounded-2xl hover:bg-green-400 transition-all active:scale-95 text-sm sm:text-base">
             Deposit Funds
           </button>
         </div>
 
         {/* Stats - Super Curved */}
-        <div className="grid grid-cols-2 md:grid-cols-4 gap-6 mb-10">
+        <div className="grid grid-cols-2 md:grid-cols-4 gap-3 sm:gap-6 mb-6 sm:mb-10">
           {[
             { label: 'Balance', val: `$${(user?.balance ?? 0).toFixed(2)}` },
             { label: 'Invested', val: `$${investments.reduce((s, i) => s + i.amount, 0).toFixed(2)}` },
             { label: 'Returns', val: `$${investments.reduce((s, i) => s + i.expected_return, 0).toFixed(2)}`, color: 'text-green-400' },
             { label: 'Active', val: investments.filter(i => i.status === 'active').length }
           ].map((stat, i) => (
-            <div key={i} className="bg-[#0A0A0A] border border-white/5 p-6 rounded-3xl">
-              <p className="text-gray-500 text-sm mb-1">{stat.label}</p>
-              <p className={`text-2xl font-bold ${stat.color || ''}`}>{stat.val}</p>
+            <div key={i} className="bg-[#0A0A0A] border border-white/5 p-4 sm:p-6 rounded-2xl sm:rounded-3xl">
+              <p className="text-gray-500 text-xs sm:text-sm mb-1">{stat.label}</p>
+              <p className={`text-lg sm:text-2xl font-bold ${stat.color || ''}`}>{stat.val}</p>
             </div>
           ))}
         </div>
 
         {/* Chart Section - Super Curved */}
-        <div className="bg-[#0A0A0A] border border-white/5 p-8 rounded-[2.5rem] mb-10 shadow-2xl">
-          <div className="flex justify-between items-start mb-8">
+        <div className="bg-[#0A0A0A] border border-white/5 p-4 sm:p-8 rounded-2xl sm:rounded-[2.5rem] mb-6 sm:mb-10 shadow-2xl">
+          <div className="flex flex-col sm:flex-row justify-between items-start gap-4 sm:gap-0 mb-6 sm:mb-8">
             <div>
-              <h2 className="text-gray-400 text-sm mb-2">Total Portfolio Value</h2>
-              <div className="flex items-baseline gap-3">
-                <span className="text-5xl font-bold tracking-tight">
+              <h2 className="text-gray-400 text-xs sm:text-sm mb-1 sm:mb-2">Total Portfolio Value</h2>
+              <div className="flex items-baseline gap-2 sm:gap-3 flex-wrap">
+                <span className="text-3xl sm:text-5xl font-bold tracking-tight">
                   ${displayedValue.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
                 </span>
-                <span className="text-green-400 text-lg font-medium flex items-center gap-1">
+                <span className="text-green-400 text-sm sm:text-lg font-medium flex items-center gap-1">
                   <span className="inline-block w-2 h-2 bg-green-400 rounded-full animate-pulse" />
                   Live
                 </span>
               </div>
-              <p className="text-gray-500 text-sm mt-2">
+              <p className="text-gray-500 text-xs sm:text-sm mt-1 sm:mt-2">
                 Growing every second based on your active investments
               </p>
             </div>
-            <div className="text-right">
-              <p className="text-gray-500 text-sm">24h Change</p>
-              <p className="text-green-400 text-xl font-bold">+{((investments.reduce((s, i) => s + i.roi_percentage, 0) / Math.max(investments.length, 1)) / 365).toFixed(3)}%</p>
+            <div className="text-left sm:text-right">
+              <p className="text-gray-500 text-xs sm:text-sm">24h Change</p>
+              <p className="text-green-400 text-lg sm:text-xl font-bold">+{((investments.reduce((s, i) => s + i.roi_percentage, 0) / Math.max(investments.length, 1)) / 365).toFixed(3)}%</p>
             </div>
           </div>
-          <div ref={chartContainerRef} className="w-full" />
+          <div ref={chartContainerRef} className="w-full -mx-2 sm:mx-0" />
         </div>
 
         {/* Investment Cards - Curved */}
-        <h2 className="text-xl font-semibold mb-6">Your Assets</h2>
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mb-10">
+        <h2 className="text-lg sm:text-xl font-semibold mb-4 sm:mb-6">Your Assets</h2>
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6 mb-6 sm:mb-10">
           {investments.map((inv, i) => (
-            <div key={inv.id} className="bg-[#0A0A0A] border border-white/5 rounded-[2rem] overflow-hidden group hover:border-green-500/30 transition-all">
-              <div className="h-44 relative overflow-hidden">
+            <div key={inv.id} className="bg-[#0A0A0A] border border-white/5 rounded-2xl sm:rounded-[2rem] overflow-hidden group hover:border-green-500/30 transition-all">
+              <div className="h-36 sm:h-44 relative overflow-hidden">
                 <img
                   src={cardImages[i % 2]}
                   className="w-full h-full object-cover opacity-80 group-hover:opacity-100 group-hover:scale-105 transition-all duration-300"
                   alt={inv.package_name}
                 />
                 <div className="absolute inset-0 bg-gradient-to-t from-[#0A0A0A] via-transparent to-transparent" />
-                <span className="absolute top-4 right-4 bg-green-500/20 backdrop-blur-sm text-green-400 text-xs font-medium px-3 py-1.5 rounded-full border border-green-500/30">
+                <span className="absolute top-3 right-3 sm:top-4 sm:right-4 bg-green-500/20 backdrop-blur-sm text-green-400 text-xs font-medium px-2.5 py-1 sm:px-3 sm:py-1.5 rounded-full border border-green-500/30">
                   {inv.status}
                 </span>
               </div>
-              <div className="p-6">
-                <h3 className="font-bold text-lg mb-4">{inv.package_name}</h3>
-                <div className="space-y-3">
-                  <div className="flex justify-between text-sm">
+              <div className="p-4 sm:p-6">
+                <h3 className="font-bold text-base sm:text-lg mb-3 sm:mb-4">{inv.package_name}</h3>
+                <div className="space-y-2 sm:space-y-3">
+                  <div className="flex justify-between text-xs sm:text-sm">
                     <span className="text-gray-500">Invested</span>
                     <span className="text-white font-medium">${inv.amount.toLocaleString()}</span>
                   </div>
-                  <div className="flex justify-between text-sm">
+                  <div className="flex justify-between text-xs sm:text-sm">
                     <span className="text-gray-500">Expected Return</span>
                     <span className="text-green-400 font-medium">${inv.expected_return.toLocaleString()}</span>
                   </div>
-                  <div className="flex justify-between text-sm">
+                  <div className="flex justify-between text-xs sm:text-sm">
                     <span className="text-gray-500">ROI</span>
                     <span className="text-green-400 font-bold">{inv.roi_percentage}%</span>
                   </div>
@@ -330,18 +335,18 @@ const Portfolio = () => {
 
       {/* Modal - Curved */}
       {showDepositModal && (
-        <div className="fixed inset-0 bg-black/90 backdrop-blur-sm flex items-center justify-center z-50 p-6">
-          <div className="bg-[#0A0A0A] border border-white/10 p-8 rounded-[3rem] max-w-md w-full shadow-2xl">
-            <h2 className="text-2xl font-bold mb-2">Deposit</h2>
-            <p className="text-gray-500 text-sm mb-6">Add funds to your secure wallet.</p>
-            <input 
+        <div className="fixed inset-0 bg-black/90 backdrop-blur-sm flex items-center justify-center z-50 p-4 sm:p-6">
+          <div className="bg-[#0A0A0A] border border-white/10 p-5 sm:p-8 rounded-2xl sm:rounded-[3rem] max-w-md w-full shadow-2xl">
+            <h2 className="text-xl sm:text-2xl font-bold mb-2">Deposit</h2>
+            <p className="text-gray-500 text-xs sm:text-sm mb-4 sm:mb-6">Add funds to your secure wallet.</p>
+            <input
               type="number" value={depositAmount} onChange={e => setDepositAmount(e.target.value)}
-              className="w-full bg-black border border-white/5 rounded-2xl p-4 mb-6 outline-none focus:border-green-500 transition-colors"
+              className="w-full bg-black border border-white/5 rounded-xl sm:rounded-2xl p-3 sm:p-4 mb-4 sm:mb-6 outline-none focus:border-green-500 transition-colors text-sm sm:text-base"
               placeholder="0.00"
             />
-            <div className="flex gap-4">
-              <button onClick={() => setShowDepositModal(false)} className="flex-1 py-4 text-gray-400 font-bold">Cancel</button>
-              <button onClick={handleDeposit} className="flex-1 py-4 bg-green-500 text-black font-bold rounded-2xl">{depositing ? '...' : 'Confirm'}</button>
+            <div className="flex gap-3 sm:gap-4">
+              <button onClick={() => setShowDepositModal(false)} className="flex-1 py-3 sm:py-4 text-gray-400 font-bold text-sm sm:text-base">Cancel</button>
+              <button onClick={handleDeposit} className="flex-1 py-3 sm:py-4 bg-green-500 text-black font-bold rounded-xl sm:rounded-2xl text-sm sm:text-base">{depositing ? '...' : 'Confirm'}</button>
             </div>
           </div>
         </div>
