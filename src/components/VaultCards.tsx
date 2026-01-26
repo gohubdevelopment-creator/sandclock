@@ -1,13 +1,15 @@
 import soc2Icon from '../images/SOC2.png'
 import insuredIcon from '../images/insured.svg'
 import logoIcon from '../images/image.png'
+import card1 from '../images/card1.png'
+import card2 from '../images/card2.png'
 
 interface VaultCard {
   title: string;
   description: string;
   tvl: string;
   protocol: string;
-  gradient: string;
+  image: string;
 }
 
 const VaultCards = () => {
@@ -17,14 +19,14 @@ const VaultCards = () => {
       description: 'Capital-efficient ETH strategy to amplify staking yield via recursive leveraged staking.',
       tvl: '$11.5K',
       protocol: 'Aave',
-      gradient: 'from-cyan-400 via-teal-300 to-blue-500',
+      image: card1,
     },
     {
       title: 'USDC Stable Yield',
       description: "Multi-pronged strategy utilizing Aave and Ethereum's Proof-of-Stake yield to generate a return on USDC deposits.",
       tvl: '$3.1K',
       protocol: 'Aave',
-      gradient: 'from-yellow-200 via-green-200 to-yellow-300',
+      image: card2,
     },
   ];
 
@@ -37,7 +39,8 @@ const VaultCards = () => {
               key={vault.title}
               className="bg-black border border-white/10 rounded-3xl overflow-hidden hover:border-white/20 transition-colors cursor-pointer"
             >
-              <div className={`h-44 lg:h-52 bg-gradient-to-br ${vault.gradient} relative`}>
+              <div className="h-44 lg:h-52 relative overflow-hidden">
+                <img src={vault.image} alt={vault.title} className="w-full h-full object-cover" />
                 <span className="absolute top-4 right-4 bg-gray-900/80 text-white text-sm px-4 py-1.5 rounded-full flex items-center gap-2">
                   <img src={logoIcon} alt="Logo" className="w-5 h-5 object-contain" />
                   Managed

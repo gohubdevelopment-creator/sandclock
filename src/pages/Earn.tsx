@@ -1,8 +1,13 @@
 import { useState, useEffect } from 'react'
 import { Link, useNavigate } from 'react-router-dom'
 import { useAuth } from '../context/AuthContext'
+import { API_BASE_URL } from '../config/api'
 import soc2Icon from '../images/SOC2.png'
 import insuredIcon from '../images/insured.svg'
+import card1 from '../images/card1.png'
+import card2 from '../images/card2.png'
+
+const cardImages = [card1, card2]
 
 interface Package {
   id: number
@@ -37,7 +42,7 @@ const Earn = () => {
 
   const fetchPackages = async () => {
     try {
-      const res = await fetch('http://localhost:3001/api/packages')
+      const res = await fetch(`${API_BASE_URL}/api/packages`)
       const data = await res.json()
       setPackages(data)
     } catch (error) {
@@ -81,7 +86,7 @@ const Earn = () => {
 
     try {
       const token = localStorage.getItem('token')
-      const res = await fetch('http://localhost:3001/api/investments', {
+      const res = await fetch(`${API_BASE_URL}/api/investments`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -156,7 +161,12 @@ const Earn = () => {
                 className="bg-black border border-white/10 rounded-2xl overflow-hidden hover:border-white/20 transition-colors cursor-pointer"
                 onClick={() => setSelectedPackage(pkg)}
               >
-                <div className={`h-40 bg-gradient-to-br ${pkg.gradient} relative`}>
+                <div className="h-40 relative overflow-hidden">
+                  <img
+                    src={cardImages[packages.indexOf(pkg) % cardImages.length]}
+                    alt={pkg.name}
+                    className="w-full h-full object-cover"
+                  />
                   <span className="absolute top-3 right-3 bg-gray-900/80 text-white text-xs px-3 py-1 rounded-full flex items-center gap-1">
                     <span className="w-2 h-2 bg-green-500 rounded-full"></span>
                     Active
@@ -228,7 +238,13 @@ const Earn = () => {
               </button>
             </div>
 
-            <div className={`h-20 sm:h-24 bg-gradient-to-br ${selectedPackage.gradient} rounded-xl mb-4 sm:mb-6`}></div>
+            <div className="h-20 sm:h-24 rounded-xl mb-4 sm:mb-6 overflow-hidden">
+              <img
+                src={cardImages[packages.findIndex(p => p.id === selectedPackage.id) % cardImages.length]}
+                alt={selectedPackage.name}
+                className="w-full h-full object-cover"
+              />
+            </div>
 
             <div className="space-y-3 sm:space-y-4 mb-4 sm:mb-6">
               <div className="flex justify-between">
