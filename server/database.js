@@ -5,7 +5,8 @@ import { dirname, join } from 'path';
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = dirname(__filename);
 
-const db = new Database(join(__dirname, 'sandclock.db'));
+const dbPath = process.env.DATABASE_PATH || join(__dirname, 'sandclock.db');
+const db = new Database(dbPath);
 
 // Enable foreign keys
 db.pragma('foreign_keys = ON');
